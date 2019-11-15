@@ -21,31 +21,31 @@ print("Reading file: " + filepath)
 tree = xml.parse(filepath)
 root = tree.getroot()
 
-obstacles = []
+obstacles = []  # (xmin, xmax, ymin, ymax)
 for obstacle in root.findall("obstacle"):
-    xlimits = float(obstacle.get("x1")), float(obstacle.get("x2"))
-    ylimits = float(obstacle.get("y1")), float(obstacle.get("y2"))
-    obstacle = (np.floor(min(xlimits)), np.floor(min(ylimits)),
-                np.ceil(max(xlimits)), np.ceil(max(ylimits)))
+    obstacle = np.array((float(obstacle.get("x1")), float(obstacle.get(
+        "x2")), float(obstacle.get("y1")), float(obstacle.get("y2"))))
     obstacles.append(obstacle)
 
 obstacles = np.array(obstacles).astype(np.int)
-print(obstacles)
+# set min to 0
+obstacles[:, :2] -= np.min(obstacles[:, 0])
+obstacles[:, 2:] -= np.min(obstacles[:, 2])
+
 xmin = np.min(obstacles[:, 0])
-ymin = np.min(obstacles[:, 1])
-xmax = np.max(obstacles[:, 2])
+xmax = np.max(obstacles[:, 1])
+ymin = np.min(obstacles[:, 2])
 ymax = np.max(obstacles[:, 3])
 
-print "Map dimensions: (%f, %f) -- (%f, %f)" % (xmin, ymin, xmax, ymax)
+print("Map dimensions: (%f, %f) -- (%f, %f)" % (xmin, ymin, xmax, ymax))
 width = xmax + 1
 height = ymax + 1
 
-grid = numpy.uint8(numpy.zeros((height, width)))
+grid = np.zeros((height, width), np.uint8)
 
 for obstacle in obstacles:
-    for x in xrange(obstacle[0], obstacle[2] + 1):
-        for y in xrange(obstacle[1], obstacle[3] + 1):
-            grid[x, y] = 255
+    grid = cv2.line(
+        grid, (obstacle[0], obstacle[2]), (obstacle[1], obstacle[3]), 255, 3)
 
 outputFilename = filepath
 outputFilename = outputFilename.replace(".xml", ".png")
