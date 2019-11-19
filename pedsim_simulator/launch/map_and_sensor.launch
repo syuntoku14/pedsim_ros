@@ -1,0 +1,32 @@
+<launch>
+    <arg name="obs_pcd" default="true"/>
+    <arg name="ped_pcd" default="true"/>
+    <!-- point cloud -->
+    <include file="$(find pedsim_sensors)/launch/obstacle_pcd_sensor.launch" if="$(arg obs_pcd)"/>
+    <include file="$(find pedsim_sensors)/launch/people_pcd_sensor.launch" if="$(arg ped_pcd)"/>
+    <!-- pointcloud_to_laserscan -->
+    <node pkg="pointcloud_to_laserscan" type="pointcloud_to_laserscan_node" name="pointcloud_to_laserscan">
+        <rosparam>
+      target_frame: base_footprint
+      transform_tolerance: 0.01
+      min_height: 0.0
+      max_height: 1.0
+      
+      angle_min: -3.1416
+      angle_max: 3.1416
+      angle_increment: 0.0087
+      scan_time: 0.3333
+      range_min: 0.20
+      range_max: 10.0
+      use_inf: true
+      
+      #concurrency_level affects number of pc queued for processing and the number of threadsused
+      # 0: Detect number of cores
+      # 1: Single threaded
+      # 2: inf : Parallelism level
+      concurrency_level: 1
+        </rosparam>
+        <remap from="cloud_in" to="/pedsim_obstacle_sensor/point_cloud_local"/>
+        <remap from="scan" to="/pedsim_obstacle_sensor/scan_local"/>
+    </node>
+</launch>
