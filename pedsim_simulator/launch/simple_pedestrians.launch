@@ -1,11 +1,15 @@
 <launch>
   <arg name="kbd_teleop" default="false"/>
-  <arg name="rqt_teleop" default="true"/>
+  <arg name="rqt_teleop" default="false"/>
   <arg name="visualize" default="true"/>
-  <arg name="with_robot" default="true"/>
+  <arg name="with_robot" default="false"/>
 
-  <arg name="simulation_factor" default="3.0"/> <!-- Speed up -->
-  <arg name="update_rate" default="25.0"/> <!-- Hz -->
+  <!-- Speed up -->
+  <arg name="simulation_factor" default="3.0"/>
+  <!-- Hz -->
+  <arg name="update_rate" default="25.0"/>
+  <!-- Navigation -->
+  <arg name="use_default_map" default="true"/>
 
   <!-- Simulator -->
   <include file="$(find pedsim_simulator)/launch/simulator.launch">
@@ -28,6 +32,10 @@
   <include file="$(find pedsim_visualizer)/launch/visualizer.launch"/>
 
   <!-- Rviz -->
-  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/social_contexts_activities.rviz" if="$(arg visualize)"/>
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/debug.rviz" if="$(arg visualize)"/>
+
+  <!-- map_server -->
+  <node pkg="map_server" type="map_server" name="world_map_server" args="$(find pedsim_simulator)scenarios/social_contexts.yaml" if="$(arg use_default_map)"/>
+  <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 100" if="$(arg use_default_map)"/>
 
 </launch>

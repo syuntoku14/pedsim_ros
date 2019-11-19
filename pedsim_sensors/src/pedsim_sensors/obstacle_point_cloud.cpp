@@ -1,32 +1,32 @@
 /**
-* Copyright 2014- Social Robotics Lab, University of Freiburg
-*
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
-*
-*    # Redistributions of source code must retain the above copyright
-*       notice, this list of conditions and the following disclaimer.
-*    # Redistributions in binary form must reproduce the above copyright
-*       notice, this list of conditions and the following disclaimer in the
-*       documentation and/or other materials provided with the distribution.
-*    # Neither the name of the University of Freiburg nor the names of its
-*       contributors may be used to endorse or promote products derived from
-*       this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-* ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-* LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-* CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-* SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-* INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-* CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-* ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-* POSSIBILITY OF SUCH DAMAGE.
-*
-* \author Billy Okal <okal@cs.uni-freiburg.de>
-*/
+ * Copyright 2014- Social Robotics Lab, University of Freiburg
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ *    # Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *    # Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *    # Neither the name of the University of Freiburg nor the names of its
+ *       contributors may be used to endorse or promote products derived from
+ *       this software without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+ * POSSIBILITY OF SUCH DAMAGE.
+ *
+ * \author Billy Okal <okal@cs.uni-freiburg.de>
+ */
 
 #include <pedsim_sensors/obstacle_point_cloud.h>
 #include <pedsim_utils/geometry.h>
@@ -39,9 +39,9 @@ ObstaclePointCloud::ObstaclePointCloud(const ros::NodeHandle& node_handle,
                                        const double rate, const FoVPtr& fov)
     : PedsimSensor(node_handle, rate, fov) {
   pub_signals_local_ =
-      nh_.advertise<sensor_msgs::PointCloud>("point_cloud_local", 1);
+      nh_.advertise<sensor_msgs::PointCloud2>("point_cloud_local", 1);
   pub_signals_global_ =
-      nh_.advertise<sensor_msgs::PointCloud>("point_cloud_global", 1);
+      nh_.advertise<sensor_msgs::PointCloud2>("point_cloud_global", 1);
 
   sub_simulated_obstacles_ =
       nh_.subscribe("/pedsim_simulator/simulated_walls", 1,
@@ -74,6 +74,7 @@ void ObstaclePointCloud::broadcast() {
   std::uniform_real_distribution<float> width_distribution(-0.5, 0.5);
 
   sensor_msgs::PointCloud pcd_global;
+  sensor_msgs::PointCloud2 pcd_global2;
   pcd_global.header.stamp = ros::Time::now();
   pcd_global.header.frame_id = sim_obstacles->header.frame_id;
   pcd_global.points.resize(num_points);
@@ -82,6 +83,7 @@ void ObstaclePointCloud::broadcast() {
   pcd_global.channels[0].values.resize(num_points);
 
   sensor_msgs::PointCloud pcd_local;
+  sensor_msgs::PointCloud2 pcd_local2;
   pcd_local.header.stamp = ros::Time::now();
   pcd_local.header.frame_id = robot_odom_.header.frame_id;
   pcd_local.points.resize(num_points);
@@ -132,10 +134,12 @@ void ObstaclePointCloud::broadcast() {
   }
 
   if (pcd_local.channels[0].values.size() > 1) {
-    pub_signals_local_.publish(pcd_local);
+    sensor_msgs::convertPointCloudToPointCloud2(pcd_local, pcd_local2);
+    pub_signals_local_.publish(pcd_local2);
   }
   if (pcd_global.channels[0].values.size() > 1) {
-    pub_signals_global_.publish(pcd_global);
+    sensor_msgs::convertPointCloudToPointCloud2(pcd_global, pcd_global2);
+    pub_signals_global_.publish(pcd_global2);
   }
 
   q_obstacles_.pop();
@@ -157,7 +161,7 @@ void ObstaclePointCloud::obstaclesCallBack(
   q_obstacles_.emplace(obstacles);
 }
 
-}  // namespace
+}  // namespace pedsim_ros
 
 // --------------------------------------------------------------
 
@@ -177,8 +181,8 @@ int main(int argc, char** argv) {
   node.param<double>("rate", sensor_rate, 25.0);
 
   pedsim_ros::ObstaclePointCloud pcd_sensor(node, sensor_rate, circle_fov);
-  ROS_INFO_STREAM("Initialized obstacle PCD sensor with center: (" 
-    << init_x << ", " << init_y << ") and range: " << fov_range);
+  ROS_INFO_STREAM("Initialized obstacle PCD sensor with center: ("
+                  << init_x << ", " << init_y << ") and range: " << fov_range);
 
   pcd_sensor.run();
   return 0;
