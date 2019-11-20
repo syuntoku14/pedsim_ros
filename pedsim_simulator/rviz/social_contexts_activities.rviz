@@ -57,7 +57,7 @@ Visualization Manager:
       Length: 1
       Name: RobotFrame
       Radius: 0.100000001
-      Reference Frame: base_footprint
+      Reference Frame: base_link
       Value: true
     - Class: rviz/Group
       Displays:

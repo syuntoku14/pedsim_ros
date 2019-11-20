@@ -11,6 +11,8 @@ set(PACKAGE_DEPS
   sensor_msgs
   tf
   pedsim_utils
+  pcl_conversions
+  pcl_ros
 )
 find_package(catkin REQUIRED COMPONENTS ${PACKAGE_DEPS})
 
@@ -27,6 +29,12 @@ include_directories(include)
 include_directories(${catkin_INCLUDE_DIRS})
 link_directories(${catkin_LIBRARY_DIRS})
 
+# merged point cloud sensor.
+set(MERGE_PCD_EXEC_NAME pedsim_merge_sensor)
+add_executable(${MERGE_PCD_EXEC_NAME} src/pedsim_sensors/merge_point_cloud.cpp)
+add_dependencies(${MERGE_PCD_EXEC_NAME} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(${MERGE_PCD_EXEC_NAME} ${catkin_LIBRARIES})
+
 # People point cloud sensor.
 set(PEOPLE_PCD_EXEC_NAME pedsim_people_sensor)
 add_executable(${PEOPLE_PCD_EXEC_NAME} src/pedsim_sensors/people_point_cloud.cpp)
@@ -39,14 +47,13 @@ add_executable(${OBSTACLE_PCD_EXEC_NAME} src/pedsim_sensors/obstacle_point_cloud
 add_dependencies(${OBSTACLE_PCD_EXEC_NAME} ${catkin_EXPORTED_TARGETS})
 target_link_libraries(${OBSTACLE_PCD_EXEC_NAME} ${catkin_LIBRARIES})
 
-
-
 #############
 ## Install ##
 #############
 
 install(
   TARGETS
+    ${MERGE_PCD_EXEC_NAME}
     ${PEOPLE_PCD_EXEC_NAME}
     ${OBSTACLE_PCD_EXEC_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
