@@ -37,12 +37,12 @@ include_directories(${catkin_INCLUDE_DIRS})
 include(${QT_USE_FILE})
 
 set(SOURCES
-  src/simulator_node.cpp
+	src/simulator_node.cpp
 	src/simulator.cpp
-  src/scene.cpp
-  src/config.cpp
-  src/agentstatemachine.cpp
-  src/scenarioreader.cpp
+	src/scene.cpp
+	src/config.cpp
+	src/agentstatemachine.cpp
+	src/scenarioreader.cpp
 	src/rng.cpp
 
 	# elements
@@ -117,10 +117,16 @@ add_executable(simulate_diff_drive_robot src/simulate_diff_drive_robot.cpp)
 add_dependencies(simulate_diff_drive_robot ${catkin_EXPORTED_TARGETS})
 target_link_libraries(simulate_diff_drive_robot ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
 
+add_executable(pub_robotodom src/pub_robotodom.cpp)
+add_dependencies(pub_robotodom ${catkin_EXPORTED_TARGETS})
+target_link_libraries(pub_robotodom ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
+
+
 install(
   TARGETS
     ${EXECUTABLE_NAME}
-    simulate_diff_drive_robot
+	simulate_diff_drive_robot
+	pub_robotodom
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
