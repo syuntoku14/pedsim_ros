@@ -5,20 +5,30 @@
 ros::Publisher odom_pub;
 geometry_msgs::Twist cmd_vel;
 nav_msgs::Odometry robot_position;
+ros::Time current_time;
 
 void robotpositionCbk(const nav_msgs::Odometry& _robot_position) {
-  robot_position = _robot_position;
+    robot_position = _robot_position;
+    current_time = ros::Time::now();
 
-  nav_msgs::Odometry robot_odom;
-  robot_odom.pose = robot_position.pose;
-  robot_odom.twist.twist = cmd_vel;
-  odom_pub.publish(robot_odom);
+    nav_msgs::Odometry robot_odom;
+    robot_odom.header.stamp = current_time;
+    robot_odom.header.frame_id = "odom";
+    robot_odom.child_frame_id = "base_link";
+    robot_odom.pose = robot_position.pose;
+    robot_odom.twist.twist = cmd_vel;
+    odom_pub.publish(robot_odom);
 };
 
 void cmd_velCbk(const geometry_msgs::Twist& _cmd_vel) 
 { 
     cmd_vel = _cmd_vel; 
+    current_time = ros::Time::now();
     nav_msgs::Odometry robot_odom;
+
+    robot_odom.header.stamp = current_time;
+    robot_odom.header.frame_id = "odom";
+    robot_odom.child_frame_id = "base_link";
     robot_odom.pose = robot_position.pose;
     robot_odom.twist.twist = cmd_vel;
     odom_pub.publish(robot_odom);
