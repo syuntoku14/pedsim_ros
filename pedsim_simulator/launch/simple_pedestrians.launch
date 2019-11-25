@@ -32,10 +32,10 @@
   <include file="$(find pedsim_visualizer)/launch/visualizer.launch"/>
 
   <!-- Rviz -->
-  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/debug.rviz" if="$(arg visualize)"/>
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/move_base.rviz" if="$(arg visualize)"/>
 
   <!-- map_server -->
-  <node pkg="map_server" type="map_server" name="world_map_server" args="$(find pedsim_simulator)scenarios/social_contexts_vel.yaml" if="$(arg use_default_map)"/>
+  <node pkg="map_server" type="map_server" name="world_map_server" args="$(find pedsim_simulator)scenarios/social_contexts.yaml" if="$(arg use_default_map)"/>
   <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 100" if="$(arg use_default_map)"/>
 
   <!-- cmd_vel controller -->

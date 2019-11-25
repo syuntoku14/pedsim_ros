@@ -76,7 +76,7 @@ outputFilename = filepath
 outputFilename = outputFilename.replace(".xml", ".png")
 
 print "Writing output to " + outputFilename
-cv2.imwrite(outputFilename, grid)
+cv2.imwrite(outputFilename, cv2.bitwise_not(grid))
 
 origin = [float(xmin), float(ymin), 0]
 map_yaml = {"image":outputFilename, "resolution":resolution,
