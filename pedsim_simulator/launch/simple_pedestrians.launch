@@ -3,19 +3,18 @@
   <arg name="rqt_teleop" default="false"/>
   <arg name="visualize" default="true"/>
   <arg name="with_robot" default="false"/>
+  <arg name="scene_file" default="$(find pedsim_simulator)scenarios/scene1.xml"/>
+  <arg name="map_file" default="$(find pedsim_simulator)scenarios/scene1_vel.yaml"/>
 
   <!-- Speed up -->
   <arg name="simulation_factor" default="1.0"/>
   <!-- Hz -->
   <arg name="update_rate" default="10.0"/>
-  <!-- Navigation -->
-  <arg name="use_default_map" default="true"/>
 
   <!-- Simulator -->
   <include file="$(find pedsim_simulator)/launch/simulator.launch">
-    <arg name="kbd_teleop" value="$(arg kbd_teleop)"/>
     <arg name="rqt_teleop" value="$(arg rqt_teleop)"/>
-    <arg name="scene_file" value="$(find pedsim_simulator)scenarios/social_contexts.xml"/>
+    <arg name="scene_file" value="$(arg scene_file)"/>
     <arg name="with_robot" value="$(arg with_robot)"/>
     <arg name="simulation_factor" value="$(arg simulation_factor)"/>
     <arg name="update_rate" value="$(arg update_rate)"/>
@@ -34,10 +33,6 @@
   <!-- Rviz -->
   <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/move_base.rviz" if="$(arg visualize)"/>
 
-  <!-- map_server -->
-  <node pkg="map_server" type="map_server" name="world_map_server" args="$(find pedsim_simulator)scenarios/social_contexts_vel.yaml" if="$(arg use_default_map)"/>
-  <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 100" if="$(arg use_default_map)"/>
-
   <!-- cmd_vel controller -->
   <include file="$(find pedsim_simulator)/launch/robot_controller.launch">
     <arg name="kbd_teleop" default="$(arg kbd_teleop)"/>
@@ -47,8 +42,11 @@
   <include file="$(find pedsim_simulator)/launch/robot_sensor.launch" />
 
   <!-- publish odometry based on robot-poseition and cmd_vel -->
-  <node pkg="pedsim_simulator" type="pub_robotodom" name="pub_robotodom">
+  <node pkg="pedsim_simulator" type="pub_robotodom" name="pub_robotodom"/>
 
-  </node>
+  <!-- map server -->
+  <include file="$(find pedsim_simulator)/launch/map_server.launch">
+    <arg name="map_file" value="$(arg map_file)"/>
+  </include>
 
 </launch>
