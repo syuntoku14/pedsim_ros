@@ -3,8 +3,9 @@
   <arg name="rqt_teleop" default="false"/>
   <arg name="visualize" default="true"/>
   <arg name="with_robot" default="false"/>
-  <arg name="scene_file" default="$(find pedsim_simulator)scenarios/scene1.xml"/>
-  <arg name="map_file" default="$(find pedsim_simulator)scenarios/scene1_vel.yaml"/>
+  <arg name="scene_name" default="social_contexts"/>
+  <arg name="scene_file" default="$(find pedsim_simulator)scenarios/$(arg scene_name).xml"/>
+  <arg name="map_file" default="$(find pedsim_simulator)scenarios/$(arg scene_name)_vel.yaml"/>
 
   <!-- Speed up -->
   <arg name="simulation_factor" default="1.0"/>
@@ -31,7 +32,7 @@
   <include file="$(find pedsim_visualizer)/launch/visualizer.launch"/>
 
   <!-- Rviz -->
-  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/move_base.rviz" if="$(arg visualize)"/>
+  <node pkg="rviz" type="rviz" name="rviz" args="-d $(find pedsim_simulator)/rviz/debug.rviz" if="$(arg visualize)"/>
 
   <!-- cmd_vel controller -->
   <include file="$(find pedsim_simulator)/launch/robot_controller.launch">

@@ -7,17 +7,13 @@
 ros::Publisher odom_pub, pose_pub;
 geometry_msgs::Twist cmd_vel;
 geometry_msgs::PoseWithCovarianceStamped robot_pose_cov;
+nav_msgs::Odometry robot_odom;
 std::string odom_frame, map_frame, base_frame;
 double publish_frequency;
 
 void cmd_velCbk(const geometry_msgs::Twist& _cmd_vel) 
 {   
-    nav_msgs::Odometry robot_odom;
-    robot_odom.header.frame_id = odom_frame;
-    robot_odom.header.stamp = ros::Time(0);
-    robot_odom.pose = robot_pose_cov.pose;
     robot_odom.twist.twist = _cmd_vel;
-    odom_pub.publish(robot_odom);
 };
 
 int main(int argc, char **argv)
@@ -58,6 +54,11 @@ int main(int argc, char **argv)
             robot_pose_cov.pose.pose.position.y = transform.getOrigin().getY();
             robot_pose_cov.pose.pose.position.z = transform.getOrigin().getZ();
             pose_pub.publish(robot_pose_cov);
+
+            robot_odom.header.frame_id = odom_frame;
+            robot_odom.header.stamp = ros::Time(0);
+            robot_odom.pose = robot_pose_cov.pose;
+            odom_pub.publish(robot_odom);
           } catch (tf::TransformException ex) {
             ROS_ERROR("%s",ex.what());
             ros::Duration(1.0).sleep();
