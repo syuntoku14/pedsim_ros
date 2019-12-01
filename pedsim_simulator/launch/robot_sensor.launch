@@ -1,15 +1,13 @@
 <launch>
   <!-- point cloud -->
-  <include file="$(find pedsim_sensors)/launch/obstacle_pcd_sensor.launch" />
-  <include file="$(find pedsim_sensors)/launch/people_pcd_sensor.launch" />
-  <node pkg="pedsim_sensors" type="pedsim_merge_sensor" name="pedsim_merge_sensor">
-
-  </node>
+  <!-- <include file="$(find pedsim_sensors)/launch/obstacle_pcd_sensor.launch" /> -->
+  <!-- <include file="$(find pedsim_sensors)/launch/people_pcd_sensor.launch" /> -->
+  <include file="$(find pedsim_sensors)/launch/pcd_sensor.launch" />
   <node pkg="nodelet" type="nodelet" name="manager" args="manager"/>
   <!-- pointcloud_to_laserscan -->
   <node pkg="nodelet" type="nodelet" name="pointcloud_to_laserscan" args="load pointcloud_to_laserscan/pointcloud_to_laserscan_nodelet manager">
-    <remap from="cloud_in" to="/pedsim_merged_sensor/point_cloud_local"/>
-    <remap from="scan" to="/pedsim_merged_sensor/scan_local"/>
+    <remap from="cloud_in" to="/pedsim_sensor/point_cloud_local"/>
+    <remap from="scan" to="/pedsim_sensor/scan_local"/>
     <rosparam>
       target_frame: base_link
       transform_tolerance: 0.01

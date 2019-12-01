@@ -177,7 +177,7 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 221
+      Max Intensity: 255
       Min Color: 0; 0; 0
       Min Intensity: 0
       Name: PointCloud2
@@ -187,7 +187,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.100000001
       Style: Flat Squares
-      Topic: /pedsim_merged_sensor/point_cloud_local
+      Topic: /pedsim_sensor/point_cloud_local
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -293,22 +293,7 @@ Visualization Manager:
       Marker Topic: /tracker_marker_peacock
       Name: MarkerArray
       Namespaces:
-        position: true
-        trajectory/#0: true
-        trajectory/#1: true
-        trajectory/#10: true
-        trajectory/#11: true
-        trajectory/#12: true
-        trajectory/#13: true
-        trajectory/#2: true
-        trajectory/#3: true
-        trajectory/#4: true
-        trajectory/#5: true
-        trajectory/#6: true
-        trajectory/#7: true
-        trajectory/#8: true
-        trajectory/#9: true
-        velosity: true
+        {}
       Queue Size: 100
       Value: true
   Enabled: true
@@ -343,18 +328,18 @@ Visualization Manager:
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 15.8474274
-        Y: 10.0863285
+        X: 10.7283726
+        Y: 8.6812315
         Z: 9.53674316e-07
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 1.40979671
+      Pitch: 0.744796932
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 4.76540089
+      Yaw: 0.457216382
     Saved: ~
 Window Geometry:
   Displays:
