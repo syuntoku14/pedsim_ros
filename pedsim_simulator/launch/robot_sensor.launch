@@ -2,7 +2,7 @@
   <!-- point cloud -->
   <!-- <include file="$(find pedsim_sensors)/launch/obstacle_pcd_sensor.launch" /> -->
   <!-- <include file="$(find pedsim_sensors)/launch/people_pcd_sensor.launch" /> -->
-  <include file="$(find pedsim_sensors)/launch/pcd_sensor.launch" />
+  <include file="$(find pedsim_sensors)/launch/occlusion_pcd_sensor.launch" />
   <node pkg="nodelet" type="nodelet" name="manager" args="manager"/>
   <!-- pointcloud_to_laserscan -->
   <node pkg="nodelet" type="nodelet" name="pointcloud_to_laserscan" args="load pointcloud_to_laserscan/pointcloud_to_laserscan_nodelet manager">

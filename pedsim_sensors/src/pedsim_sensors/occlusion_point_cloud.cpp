@@ -28,14 +28,14 @@
  * \author Billy Okal <okal@cs.uni-freiburg.de>
  */
 
-#include <pedsim_sensors/point_cloud.h>
+#include <pedsim_sensors/occlusion_point_cloud.h>
 #include <pedsim_utils/geometry.h>
 #include <math.h>
 #include <random>
 #define INF 100000000
 
 template <typename T> int sgn(T val) {
-    return (T(0) < val) - (val < T(0));
+  return (T(0) < val) - (val < T(0));
 }
 
 namespace pedsim_ros {
@@ -68,6 +68,15 @@ float PointCloud::index_to_rad(uint index){
   return -M_PI + 2 * M_PI / resol_ * index;
 }
 
+uint PointCloud::fit_index(int index) {
+  if (index < 0) {
+    return index % resol_ + resol_;
+  }
+  else{
+    return index % resol_; 
+  }
+}
+
 void PointCloud::fillDetectedObss(std::vector<Cell>& detected_obss, Cell cell, float width){
   Cell obs = cell - Cell(fov_->origin_x, fov_->origin_y);
   float edge_x = -width * sgn(obs.real());
@@ -76,10 +85,14 @@ void PointCloud::fillDetectedObss(std::vector<Cell>& detected_obss, Cell cell, f
     for (auto new_obs : {obs + Cell(edge_x, dw), obs + Cell(dw, edge_y)}){
       auto r = std::abs(new_obs);
       auto theta = std::arg(new_obs);
-      uint index = rad_to_index(theta);
-      if (r < std::abs(detected_obss[index])) {
-        auto polar = std::polar(r, theta);
-        detected_obss[index] = polar;
+      uint rad_index = rad_to_index(theta);
+      // fill adj indexes with same values
+      for (int i : {-2, -1, 0, 1, 2}){
+        uint index = fit_index(rad_index + i);
+        if (r < std::abs(detected_obss[index])) {
+          auto polar = std::polar(r, theta);
+          detected_obss[index] = polar;
+        }
       }
     }
   }

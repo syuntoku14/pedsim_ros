@@ -58,6 +58,7 @@ class PointCloud : public PedsimSensor {
   // detected obss is a 360 deg scan map
   uint rad_to_index(float rad);
   float index_to_rad(uint index);
+  uint fit_index(int index);
   void fillDetectedObss(std::vector<std::complex<float>>& detected_obss,
                         std::complex<float> obs, float width);
 

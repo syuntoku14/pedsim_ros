@@ -5,7 +5,7 @@
   <arg name="with_robot" default="false"/>
   <arg name="scene_name" default="benchmark"/>
   <arg name="scene_file" default="$(find pedsim_simulator)scenarios/$(arg scene_name).xml"/>
-  <arg name="map_file" default="$(find pedsim_simulator)scenarios/$(arg scene_name)_vel.yaml"/>
+  <arg name="map_file" default="$(find pedsim_simulator)scenarios/$(arg scene_name).yaml"/>
 
   <!-- Speed up -->
   <arg name="simulation_factor" default="1.0"/>
