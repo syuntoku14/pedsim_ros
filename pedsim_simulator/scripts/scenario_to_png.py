@@ -51,7 +51,7 @@ grid = np.zeros((height, width), np.uint8)
 
 for obstacle in obstacles:
     grid = cv2.line(
-        grid, (obstacle[0], obstacle[2]), (obstacle[1], obstacle[3]), 255, 3)
+        grid, (obstacle[0], obstacle[2]), (obstacle[1], obstacle[3]), 255, int(1 / resolution))
 
 grid = cv2.flip(grid, 0)
 

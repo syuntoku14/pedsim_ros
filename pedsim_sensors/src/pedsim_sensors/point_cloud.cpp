@@ -34,6 +34,10 @@
 #include <random>
 #define INF 100000000
 
+template <typename T> int sgn(T val) {
+    return (T(0) < val) - (val < T(0));
+}
+
 namespace pedsim_ros {
 
 using Cell = std::complex<float>;
@@ -66,16 +70,16 @@ float PointCloud::index_to_rad(uint index){
 
 void PointCloud::fillDetectedObss(std::vector<Cell>& detected_obss, Cell cell, float width){
   Cell obs = cell - Cell(fov_->origin_x, fov_->origin_y);
-  for (float edge : {-width, width}){
-    for (float dw = -width; dw <= width; dw += width / 10) {
-      for (auto new_obs : {obs + Cell(edge, dw), obs + Cell(dw, edge)}){
-        auto r = std::abs(new_obs);
-        auto theta = std::arg(new_obs);
-        uint index = rad_to_index(theta);
-        if (r < std::abs(detected_obss[index])) {
-          auto polar = std::polar(r, theta);
-          detected_obss[index] = polar;
-        }
+  float edge_x = -width * sgn(obs.real());
+  float edge_y = -width * sgn(obs.imag());
+  for (float dw = -width; dw <= width; dw += width / 10) {
+    for (auto new_obs : {obs + Cell(edge_x, dw), obs + Cell(dw, edge_y)}){
+      auto r = std::abs(new_obs);
+      auto theta = std::arg(new_obs);
+      uint index = rad_to_index(theta);
+      if (r < std::abs(detected_obss[index])) {
+        auto polar = std::polar(r, theta);
+        detected_obss[index] = polar;
       }
     }
   }
