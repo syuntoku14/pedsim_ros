@@ -40,10 +40,10 @@
   </include>
 
   <!-- publish sensor information-->
-  <!-- <include file="$(find pedsim_simulator)/launch/robot_sensor.launch" /> -->
+  <include file="$(find pedsim_simulator)/launch/robot_sensor.launch" />
 
   <!-- publish odometry based on robot-poseition and cmd_vel -->
-  <!-- <node pkg="pedsim_simulator" type="pub_robotodom" name="pub_robotodom"/> -->
+  <node pkg="pedsim_simulator" type="pub_robotodom" name="pub_robotodom"/>
 
   <!-- map server -->
   <include file="$(find pedsim_simulator)/launch/map_server.launch">

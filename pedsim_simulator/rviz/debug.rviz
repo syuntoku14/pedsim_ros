@@ -227,7 +227,7 @@ Visualization Manager:
       Size (Pixels): 3
       Size (m): 0.100000001
       Style: Flat Squares
-      Topic: /pedsim_merged_sensor/scan_local
+      Topic: /pedsim_sensor/scan_local
       Unreliable: false
       Use Fixed Frame: true
       Use rainbow: true
@@ -300,7 +300,7 @@ Visualization Manager:
   Global Options:
     Background Color: 244; 244; 244
     Default Light: true
-    Fixed Frame: odom
+    Fixed Frame: map
     Frame Rate: 30
   Name: root
   Tools:
@@ -321,25 +321,25 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 12.2347307
+      Distance: 18.6194134
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.0599999987
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 10.7283726
-        Y: 8.6812315
+        X: 5.86562252
+        Y: 7.31761837
         Z: 9.53674316e-07
       Focal Shape Fixed Size: false
       Focal Shape Size: 0.0500000007
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.00999999978
-      Pitch: 0.744796932
+      Pitch: 1.18479562
       Target Frame: <Fixed Frame>
       Value: XYOrbit (rviz)
-      Yaw: 0.457216382
+      Yaw: 1.72719908
     Saved: ~
 Window Geometry:
   Displays:

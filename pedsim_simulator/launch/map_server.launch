@@ -3,5 +3,5 @@
     <!-- map_server -->
     <arg name="map_file" default="$(find pedsim_simulator)scenarios/social_contexts.yaml"/>
     <node pkg="map_server" type="map_server" name="world_map_server" args="$(arg map_file)"/>
-    <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 100" />
+    <!-- <node pkg="tf" type="static_transform_publisher" name="map_to_odom" args="0 0 0 0 0 0 map odom 100" /> -->
 </launch>
