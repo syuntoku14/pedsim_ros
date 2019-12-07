@@ -47,9 +47,9 @@ PointCloud::PointCloud(const ros::NodeHandle& node_handle,
     : PedsimSensor(node_handle, rate, fov) {
   resol_ = resol;
   pub_signals_local_ =
-      nh_.advertise<sensor_msgs::PointCloud>("point_cloud_local", 1);
+      nh_.advertise<sensor_msgs::PointCloud2>("point_cloud_local", 1);
   pub_signals_global_ =
-      nh_.advertise<sensor_msgs::PointCloud>("point_cloud_global", 1);
+      nh_.advertise<sensor_msgs::PointCloud2>("point_cloud_global", 1);
 
   sub_simulated_obstacles_ =
       nh_.subscribe("/pedsim_simulator/simulated_walls", 1,
@@ -139,6 +139,7 @@ void PointCloud::broadcast() {
   std::uniform_real_distribution<float> width_distribution(-0.05, 0.05);
 
   sensor_msgs::PointCloud pcd_global;
+  sensor_msgs::PointCloud2 pcd_global2;
   pcd_global.header.stamp = ros::Time::now();
   pcd_global.header.frame_id = sim_obstacles->header.frame_id;
   pcd_global.points.resize(num_points);
@@ -147,6 +148,7 @@ void PointCloud::broadcast() {
   pcd_global.channels[0].values.resize(num_points);
 
   sensor_msgs::PointCloud pcd_local;
+  sensor_msgs::PointCloud2 pcd_local2;
   pcd_local.header.stamp = ros::Time::now();
   pcd_local.header.frame_id = robot_odom_.header.frame_id;
   pcd_local.points.resize(num_points);
@@ -198,10 +200,12 @@ void PointCloud::broadcast() {
   }
 
   if (pcd_local.channels[0].values.size() > 1) {
-    pub_signals_local_.publish(pcd_local);
+    sensor_msgs::convertPointCloudToPointCloud2(pcd_local, pcd_local2);
+    pub_signals_local_.publish(pcd_local2);
   }
   if (pcd_global.channels[0].values.size() > 1) {
-    pub_signals_global_.publish(pcd_global);
+    sensor_msgs::convertPointCloudToPointCloud2(pcd_global, pcd_global2);
+    pub_signals_global_.publish(pcd_global2);
   }
 
   q_obstacles_.pop();
@@ -234,7 +238,7 @@ void PointCloud::agentStatesCallBack(
 // --------------------------------------------------------------
 
 int main(int argc, char** argv) {
-  ros::init(argc, argv, "pedsim_occlusion_sensor");
+  ros::init(argc, argv, "pedsim_obstacle_sensor");
   ros::NodeHandle node("~");
 
   double init_x = 0.0, init_y = 0.0, fov_range = 0.0;
@@ -251,7 +255,7 @@ int main(int argc, char** argv) {
   node.param<int>("resol", sensor_resol, 360);
 
   pedsim_ros::PointCloud pcd_sensor(node, sensor_rate, sensor_resol, circle_fov);
-  ROS_INFO_STREAM("Initialized occlusion PCD sensor with center: ("
+  ROS_INFO_STREAM("Initialized obstacle PCD sensor with center: ("
                   << init_x << ", " << init_y << ") , range: " << fov_range << ", resolution: " << sensor_resol);
 
   pcd_sensor.run();

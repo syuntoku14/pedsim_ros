@@ -1,0 +1,6 @@
+free_thresh: 0.196
+image: /home/digital/pedsim_ws/src/pedsim_ros/pedsim_simulator/scenarios/scene3.png
+negate: 0
+occupied_thresh: 0.65
+origin: [0.0, 5.0, 0]
+resolution: 0.1
