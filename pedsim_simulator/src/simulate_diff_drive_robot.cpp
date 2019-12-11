@@ -18,7 +18,7 @@ boost::mutex mutex;
 /// These are provided in the form of a geometry_msgs::Twist, e.g. by
 /// turtlebot_teleop/turtlebot_teleop_key.
 /// The resulting robot position is published as a TF transform from world -->
-/// base_footprint frame.
+/// base_link frame.
 void updateLoop() {
   ros::Rate rate(g_updateRate);
   const double dt = g_simulationFactor / g_updateRate;
@@ -67,12 +67,13 @@ int main(int argc, char** argv) {
 
   // Process parameters
   privateHandle.param<std::string>("world_frame", g_worldFrame, "odom");
-  privateHandle.param<std::string>("robot_frame", g_robotFrame,
-                                   "base_footprint");
+  privateHandle.param<std::string>("robot_frame", g_robotFrame, "base_link");
 
-  privateHandle.param<double>("/pedsim_simulator/simulation_factor", g_simulationFactor,
+  privateHandle.param<double>("/pedsim_simulator/simulation_factor",
+                              g_simulationFactor,
                               1.0);  // set to e.g. 2.0 for 2x speed
-  privateHandle.param<double>("/pedsim_simulator/update_rate", g_updateRate, 25.0);  // in Hz
+  privateHandle.param<double>("/pedsim_simulator/update_rate", g_updateRate,
+                              25.0);  // in Hz
 
   double initialX = 0.0, initialY = 0.0, initialTheta = 0.0;
   privateHandle.param<double>("pose_initial_x", initialX, 0.0);
