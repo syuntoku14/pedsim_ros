@@ -16,6 +16,7 @@ parser.add_argument('--safe_distance', type=float, default=2.0)
 args = parser.parse_args()
 
 resolution = 0.1
+max_velocity = 10  # 1.0 meter / sec
 unknown_space = 30  # expand map 30x30m
 
 if not os.path.isfile(args.filepath):
@@ -64,8 +65,9 @@ for i in range(1, int(args.safe_distance / resolution)):
     tmp = cv2.dilate(grid, kernel=kernel, iterations=i)
     vel_grid += tmp
 
-vel_grid = vel_grid / np.max(vel_grid) * 100
-vel_grid = np.clip(vel_grid, 10, 100)
+vel_grid = vel_grid / np.max(vel_grid) * max_velocity 
+vel_grid = np.abs(vel_grid - max_velocity + np.clip(grid, 0, 100))
+vel_grid = np.clip(vel_grid, 0, 100)
 vel_grid = vel_grid.astype(np.int8)
 
 padding = int(unknown_space / resolution)
