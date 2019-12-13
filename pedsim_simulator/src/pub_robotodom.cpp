@@ -30,7 +30,7 @@ int main(int argc, char **argv)
     pose_pub = n.advertise<geometry_msgs::PoseWithCovarianceStamped>("/robot_pose", 1000); 
 
     ros::Subscriber cmd_sub =
-        n.subscribe("/pedbot/control/cmd_vel", 1000, cmd_velCbk);
+        n.subscribe("/cmd_vel", 1000, cmd_velCbk);
 
     ros::Rate rate(publish_frequency);
 
