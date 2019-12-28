@@ -2,6 +2,7 @@
 #include <ros/ros.h>
 
 #include <tf/transform_broadcaster.h>
+#include <pedsim_srvs/ResetRobotPose.h>
 
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
@@ -12,6 +13,16 @@ geometry_msgs::Twist g_currentTwist;
 tf::Transform g_currentPose;
 boost::shared_ptr<tf::TransformBroadcaster> g_transformBroadcaster;
 boost::mutex mutex;
+
+bool reset_pose(pedsim_srvs::ResetRobotPose::Request& request, pedsim_srvs::ResetRobotPose::Response& response)
+{
+  g_currentPose.getOrigin().setX(request.x);
+  g_currentPose.getOrigin().setY(request.y);
+  g_currentPose.setRotation(tf::createQuaternionFromRPY(0, 0, request.theta));
+  ROS_INFO("Reset the robot position at: [%f], [%f], [%f]", (float)request.x, (float)request.y, float(request.theta));
+  response.finished = true;
+  return true;
+}
 
 /// Simulates robot motion of a differential-drive robot with translational and
 /// rotational velocities as input
@@ -88,6 +99,9 @@ int main(int argc, char** argv) {
   g_transformBroadcaster.reset(new tf::TransformBroadcaster());
   ros::Subscriber twistSubscriber =
       nodeHandle.subscribe<geometry_msgs::Twist>("cmd_vel", 3, onTwistReceived);
+
+  // Create ROS service server to reset the robot position
+  ros::ServiceServer service = nodeHandle.advertiseService("/pedsim_ros/reset_robot_pose", reset_pose);
 
   // Run
   boost::thread updateThread(updateLoop);
