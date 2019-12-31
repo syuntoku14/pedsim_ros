@@ -1,8 +1,9 @@
 #include <geometry_msgs/Twist.h>
 #include <ros/ros.h>
+#include <std_srvs/Empty.h>
 
-#include <tf/transform_broadcaster.h>
 #include <pedsim_srvs/ResetRobotPose.h>
+#include <tf/transform_broadcaster.h>
 
 #include <boost/thread.hpp>
 #include <boost/thread/mutex.hpp>
@@ -13,13 +14,27 @@ geometry_msgs::Twist g_currentTwist;
 tf::Transform g_currentPose;
 boost::shared_ptr<tf::TransformBroadcaster> g_transformBroadcaster;
 boost::mutex mutex;
+bool paused_ = false;
 
-bool reset_pose(pedsim_srvs::ResetRobotPose::Request& request, pedsim_srvs::ResetRobotPose::Response& response)
-{
+bool onPauseSimulation(std_srvs::Empty::Request& request,
+                      std_srvs::Empty::Response& response) {
+  paused_ = true;
+  return true;
+}
+
+bool onUnpauseSimulation(std_srvs::Empty::Request& request,
+                        std_srvs::Empty::Response& response) {
+  paused_ = false;
+  return true;
+}
+
+bool reset_pose(pedsim_srvs::ResetRobotPose::Request& request,
+                pedsim_srvs::ResetRobotPose::Response& response) {
   g_currentPose.getOrigin().setX(request.x);
   g_currentPose.getOrigin().setY(request.y);
   g_currentPose.setRotation(tf::createQuaternionFromRPY(0, 0, request.theta));
-  ROS_INFO("Reset the robot position at: [%f], [%f], [%f]", (float)request.x, (float)request.y, float(request.theta));
+  ROS_INFO("Reset the robot position at: [%f], [%f], [%f]", (float)request.x,
+           (float)request.y, float(request.theta));
   response.finished = true;
   return true;
 }
@@ -40,18 +55,20 @@ void updateLoop() {
     double y = g_currentPose.getOrigin().y();
     double theta = tf::getYaw(g_currentPose.getRotation());
 
-    // Get requested translational and rotational velocity
-    double v, omega;
-    {
-      boost::mutex::scoped_lock lock(mutex);
-      v = g_currentTwist.linear.x;
-      omega = g_currentTwist.angular.z;
-    }
+    if(!paused_){
+      // Get requested translational and rotational velocity
+      double v, omega;
+      {
+        boost::mutex::scoped_lock lock(mutex);
+        v = g_currentTwist.linear.x;
+        omega = g_currentTwist.angular.z;
+      }
 
-    // Simulate robot movement
-    x += cos(theta) * v * dt;
-    y += sin(theta) * v * dt;
-    theta += omega * dt;
+      // Simulate robot movement
+      x += cos(theta) * v * dt;
+      y += sin(theta) * v * dt;
+      theta += omega * dt;
+    }
 
     // Update pose
     g_currentPose.getOrigin().setX(x);
@@ -101,7 +118,13 @@ int main(int argc, char** argv) {
       nodeHandle.subscribe<geometry_msgs::Twist>("cmd_vel", 3, onTwistReceived);
 
   // Create ROS service server to reset the robot position
-  ros::ServiceServer service = nodeHandle.advertiseService("/pedsim_ros/reset_robot_pose", reset_pose);
+  ros::ServiceServer service = nodeHandle.advertiseService(
+      "/pedsim_simulator/reset_robot_pose", reset_pose);
+  ros::ServiceServer srv_pause_simulation_ = nodeHandle.advertiseService(
+      "/pedsim_simulator/pause_diff_drive", onPauseSimulation);
+  ros::ServiceServer srv_unpause_simulation_ = nodeHandle.advertiseService(
+      "/pedsim_simulator/unpause_diff_drive", onUnpauseSimulation);
+
 
   // Run
   boost::thread updateThread(updateLoop);
