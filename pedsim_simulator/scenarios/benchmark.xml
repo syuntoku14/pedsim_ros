@@ -49,17 +49,17 @@
         <addwaypoint id="left_up"/>
         <addwaypoint id="left_down"/>
     </agent>
-
+    <!-- 
     <agent x="20" y="4" n="12" dx="10" dy="6" type="1">
         <addwaypoint id="left_up"/>
         <addwaypoint id="left_down"/>
         <addwaypoint id="right_down"/>
         <addwaypoint id="right_up"/>
-    </agent>
-    <agent x="7" y="7" n="12" dx="10" dy="6" type="1">
+    </agent> -->
+    <!-- <agent x="7" y="7" n="12" dx="10" dy="6" type="1">
         <addwaypoint id="left_up"/>
         <addwaypoint id="left_down"/>
         <addwaypoint id="right_down"/>
         <addwaypoint id="right_up"/>
-    </agent>
+    </agent> -->
 </scenario>
