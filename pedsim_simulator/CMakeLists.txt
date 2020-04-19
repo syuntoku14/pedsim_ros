@@ -121,10 +121,16 @@ add_executable(simulate_diff_drive_robot src/simulate_diff_drive_robot.cpp)
 add_dependencies(simulate_diff_drive_robot ${catkin_EXPORTED_TARGETS})
 target_link_libraries(simulate_diff_drive_robot ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
 
+add_executable(pub_robotodom src/pub_robotodom.cpp)
+add_dependencies(pub_robotodom ${catkin_EXPORTED_TARGETS})
+target_link_libraries(pub_robotodom ${BOOST_LIBRARIES} ${catkin_LIBRARIES})
+
+
 install(
   TARGETS
     ${EXECUTABLE_NAME}
-    simulate_diff_drive_robot
+	simulate_diff_drive_robot
+	pub_robotodom
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

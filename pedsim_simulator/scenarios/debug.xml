@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scenario>
+    <obstacle x1="100" y1="100" x2="101" y2="101"/>
+    <obstacle x1="0" y1="0" x2="1" y2="1"/>
+    <!--Waypoints (incl. WaitingQueues)-->
+    <waypoint id="left_down" x="5" y="2" r="3"/>
+    <waypoint id="left_up" x="5" y="8" r="3"/>
+    <waypoint id="right_down" x="38" y="2" r="3"/>
+    <waypoint id="right_up" x="38" y="8" r="3"/>
+    <!-- Robot -->
+    <agent x="1.03" y="6.97" n="1" dx="0" dy="0" type="2">
+        <addwaypoint id="left_down"/>
+        <addwaypoint id="right_down"/>
+        <addwaypoint id="right_up"/>
+    </agent>
+</scenario>
